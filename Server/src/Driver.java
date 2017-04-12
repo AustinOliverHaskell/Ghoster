@@ -11,6 +11,7 @@ public class Driver
 	{
 		try
 		{
+			// TODO Make this secure with SSL
 			ServerSocket socket = new ServerSocket(port);
 			int clientCount = 0;
 			
@@ -18,10 +19,9 @@ public class Driver
 			
 			
 			while(true)
-			{
-				// Socket is created, now we just need to wait for a request
-				
-				
+			{				
+				// The client object handles client requests and is also multithreaded
+				// Need to make sure that Client object also communicates through SSL	
 				new Client(socket.accept(), clientCount).start();
 				clientCount++;
 			}

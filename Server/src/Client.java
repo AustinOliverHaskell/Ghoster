@@ -19,7 +19,19 @@ public class Client extends Thread
 	}
 	// ------------------------
 
-	
+
+	// The form of communication between the server and the client 
+	// is through a JSON object that is sent over the network. So 
+	// this class should be able to talk to another class that will 
+	// generate valid JSON and be able to parse recieved JSON. 	
+
+	// The client  object should be able to create and talk to another 
+	// class called DataBase (Which I havent made yet), that safely talks 
+	// to the database. This needs to make sure that there isnt SQL code in
+	// the sent JSON object. Additionally, the database will store passwords
+	// with a salt and hash algorithm. Need to figure out how to transmit image
+	// and video data over a network, I think that we can just send the file as
+	// is since its all bytes in the end.s
 	@Override
 	public void run()
 	{
