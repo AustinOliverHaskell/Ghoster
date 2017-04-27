@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "992323128475",
+    "firebase_url": "https://ghoster-2c98c.firebaseio.com",
+    "project_id": "ghoster-2c98c",
+    "storage_bucket": "ghoster-2c98c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992323128475:android:6632805105ef310b",
+        "android_client_info": {
+          "package_name": "com.austinhaskell.ghoster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "992323128475-os2j8pcjje5s1g1thsf7ucrpvk0fhovv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSBo3jDChDwKKuevFmf95eBlo-m3TV6cw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

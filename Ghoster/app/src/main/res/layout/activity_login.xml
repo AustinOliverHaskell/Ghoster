@@ -1,0 +1,74 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/main_background"
+    tools:context="com.austinhaskell.ghoster.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/username_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:hint="Email Address"
+            />
+
+        <EditText
+            android:id="@+id/password_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:inputType="textPassword"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/login_bttn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/buttonBackground"
+                android:text="Login"
+                android:textColor="@color/buttonText" />
+
+            <Button
+                android:id="@+id/sign_up_bttn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/buttonBackground"
+                android:text="Sign up"
+                android:textColor="@color/buttonText" />
+        </LinearLayout>
+
+         <TextView
+             android:id="@+id/error_label"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:text="" />
+
+        <ProgressBar
+            android:id="@+id/login_progress"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:visibility="invisible"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>
