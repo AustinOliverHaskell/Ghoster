@@ -76,99 +76,100 @@ public class MainActivity extends AppCompatActivity {
         storageRef = FirebaseStorage.getInstance().getReference();
         authorization = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-
         // Listener to check if the user logs out
-        authStateListener = new FirebaseAuth.AuthStateListener()
-        {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
-            {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null)
-                {
-                    // The user is singed in
-                }
-                else
-                {
-                    // The user is signed out
-                    // TODO: Launch the login activity
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    authorization.removeAuthStateListener(authStateListener);
-                    startActivity(intent);
-                }
-            }
-        };
-
-        String[] tokens = authorization.getCurrentUser().getEmail().split("@");
-
-        DatabaseReference ref = database.getReference("images/" + tokens[0]);
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-
-                String result = "";
-
-               for (DataSnapshot n : dataSnapshot.getChildren())
-               {
-                    result = n.getValue().toString();
-               }
-
-                //StorageReference imgRef = storageRef.child(result);
-
-                StorageReference img = storageRef.child("image/"+ result + ".jpg");
-
-                try {
-                    final File localFile = File.createTempFile("image", "jpg");
-                    img.getFile(localFile)
-                            .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                    // Successfully downloaded data to local file
-                                    // ...
-
-                                    Toast.makeText(getApplicationContext(), "SUCCESS!", Toast.LENGTH_SHORT).show();
-
-                                    ImageView tile = (ImageView) findViewById(R.id.first_tile);
-
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle failed download
-                            // ...
-
-                            Toast.makeText(getApplicationContext(), "FAILURE!", Toast.LENGTH_SHORT).show();
-
+                authStateListener = new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        if (user != null) {
+                            // The user is singed in
+                        } else {
+                            // The user is signed out
+                            // TODO: Launch the login activity
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            authorization.removeAuthStateListener(authStateListener);
+                            startActivity(intent);
                         }
-                    });
-                }
-                catch (Exception error)
-                {
-                    Log.d("MAIN_ACITIVITY", "");
-                }
-
-
-                // ...
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w("MAIN_ACTIVITY", "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-
-        if (ref != null)
+                    }
+                };
+        if (authorization.getCurrentUser() == null)
         {
-            ref.addListenerForSingleValueEvent(postListener);
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            authorization.removeAuthStateListener(authStateListener);
+            startActivity(intent);
         }
+        else
+        {
 
-        userEmail = authorization.getCurrentUser().getEmail();
 
-        userEmail = userEmail.split("@")[0];
+            String[] tokens = authorization.getCurrentUser().getEmail().split("@");
+
+            DatabaseReference ref = database.getReference("images/" + tokens[0]);
+
+            ValueEventListener postListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Get Post object and use the values to update the UI
+
+                    String result = "";
+
+                    for (DataSnapshot n : dataSnapshot.getChildren()) {
+                        result = n.getValue().toString();
+                    }
+
+                    //StorageReference imgRef = storageRef.child(result);
+
+                    StorageReference img = storageRef.child("images/" + result + ".jpg");
+
+                    try
+                    {
+                        final File localFile = File.createTempFile("image", "jpg");
+                        img.getFile(localFile)
+                                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                        // Successfully downloaded data to local file
+                                        // ...
+
+                                        Toast.makeText(getApplicationContext(), "SUCCESS!", Toast.LENGTH_SHORT).show();
+
+                                        ImageView tile = (ImageView) findViewById(R.id.first_tile);
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle failed download
+                                // ...
+
+                                Toast.makeText(getApplicationContext(), "FAILURE!", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+                    } catch (Exception error) {
+                        Log.d("MAIN_ACITIVITY", "");
+                    }
+
+
+                    // ...
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w("MAIN_ACTIVITY", "loadPost:onCancelled", databaseError.toException());
+                    // ...
+                }
+            };
+
+            if (ref != null) {
+                ref.addListenerForSingleValueEvent(postListener);
+            }
+
+            userEmail = authorization.getCurrentUser().getEmail();
+
+            userEmail = userEmail.split("@")[0];
+        }
 
     }
     // ------------------------------------

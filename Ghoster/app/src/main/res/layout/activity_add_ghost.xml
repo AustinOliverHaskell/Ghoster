@@ -8,9 +8,16 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:orientation="vertical"
-    android:background="@drawable/main_background"
+    android:background="@color/theme3_purple"
     android:tileMode="repeat"
     >
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:id="@+id/upload_progress"
+        />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -72,12 +79,7 @@
             </LinearLayout>
 
 
-            <ProgressBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                android:id="@+id/upload_progress"
-                />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

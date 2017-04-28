@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity
                 }
                 else
                 {
+                    auth.getCurrentUser().sendEmailVerification();
                     // user is logged in
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -93,11 +94,15 @@ public class LoginActivity extends AppCompatActivity
                 EditText username = (EditText) findViewById(R.id.username_text);
                 EditText password = (EditText) findViewById(R.id.password_text);
 
-                if (username.getText().toString().equals("Username") || username.getText() == null)
+                if (username.getText() == null ||
+                        username.getText().toString().equals("Username") ||
+                        username.getText().toString().equals(""))
                 {
                     errorLabel.setText("Invalid Username");
                 }
-                else if (password.getText().toString().equals("Password") || password.getText() == null)
+                else if (password.getText() == null ||
+                        password.getText().toString().equals("Password") ||
+                        password.getText().toString().equals(""))
                 {
                     errorLabel.setText("Invalid Password");
                 }
@@ -120,11 +125,15 @@ public class LoginActivity extends AppCompatActivity
                 EditText username = (EditText) findViewById(R.id.username_text);
                 EditText password = (EditText) findViewById(R.id.password_text);
 
-                if (username.getText().toString().equals("Username") || username.getText() == null)
+                if (username.getText() == null ||
+                        username.getText().toString().equals("Username") ||
+                        username.getText().toString().equals(""))
                 {
                     errorLabel.setText("Invalid Username");
                 }
-                else if (password.getText().toString().equals("Password") || password.getText() == null)
+                else if (password.getText() == null ||
+                        password.getText().toString().equals("Password") ||
+                        password.getText().toString().equals(""))
                 {
                     errorLabel.setText("Invalid Password");
                 }
@@ -192,6 +201,8 @@ public class LoginActivity extends AppCompatActivity
                                     task.getException().toString(),
                                     Toast.LENGTH_SHORT).show();
                         }
+
+
 
                         // ...
                     }

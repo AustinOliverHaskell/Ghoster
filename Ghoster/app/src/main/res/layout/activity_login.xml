@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/main_background"
+    android:background="@color/theme3_purple"
     tools:context="com.austinhaskell.ghoster.LoginActivity">
 
     <LinearLayout
@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:hint="Email Address"
+            android:textColor="@color/theme3_grey"
             />
 
         <EditText
@@ -29,7 +30,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:textColor="@color/theme3_grey"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +62,10 @@
              android:id="@+id/error_label"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:text="" />
+             android:text=""
+             android:textColor="@color/theme3_grey"
+             android:textAlignment="center"
+             />
 
         <ProgressBar
             android:id="@+id/login_progress"
