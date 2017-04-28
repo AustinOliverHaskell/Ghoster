@@ -8,6 +8,7 @@
     tools:context="com.austinhaskell.ghoster.MainActivity"
     tools:showIn="@layout/activity_main"
     android:orientation="vertical"
+    android:id="@+id/image_tiles_layout"
     >
     <LinearLayout
         android:layout_height="0dp"
@@ -20,6 +21,7 @@
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:id="@+id/first_tile"
             />
         <ImageView
             android:background="@color/theme3_white"

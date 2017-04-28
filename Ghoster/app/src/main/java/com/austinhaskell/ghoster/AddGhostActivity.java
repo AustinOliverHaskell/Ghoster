@@ -141,13 +141,13 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
                     String userPath = tokens[0];
 
                     DatabaseReference dref = database.getReference("images/"+userPath+"/url");
-                    DatabaseReference latRef = database.getReference("images/"+userPath+"/lat");
-                    DatabaseReference longRef = database.getReference("images/"+userPath+"/long");
+                    //DatabaseReference latRef = database.getReference("images/"+userPath+"/lat");
+                    //DatabaseReference longRef = database.getReference("images/"+userPath+"/long");
 
                     // Add the image to the database
                     dref.setValue(fileName.getText().toString());
-                    latRef.setValue(location.getLatitude());
-                    longRef.setValue(location.getLongitude());
+                    //latRef.setValue(location.getLatitude());
+                    //longRef.setValue(location.getLongitude());
 
                     ref.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
                     {
@@ -318,6 +318,7 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
         findViewById(R.id.preview_img_view).setVisibility(View.INVISIBLE);
         findViewById(R.id.update_location).setVisibility(View.INVISIBLE);
         findViewById(R.id.duration_bttn).setVisibility(View.INVISIBLE);
+        findViewById(R.id.tag_name_id).setVisibility(View.INVISIBLE);
         findViewById(R.id.upload_progress).setVisibility(View.VISIBLE);
     }
 
@@ -327,6 +328,7 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
         findViewById(R.id.preview_img_view).setVisibility(View.VISIBLE);
         findViewById(R.id.update_location).setVisibility(View.VISIBLE);
         findViewById(R.id.duration_bttn).setVisibility(View.VISIBLE);
+        findViewById(R.id.tag_name_id).setVisibility(View.VISIBLE);
         findViewById(R.id.upload_progress).setVisibility(View.INVISIBLE);
     }
 
