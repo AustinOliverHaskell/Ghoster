@@ -10,82 +10,10 @@
     android:orientation="vertical"
     android:id="@+id/image_tiles_layout"
     >
-    <LinearLayout
-        android:layout_height="0dp"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <ImageView
-            android:background="@color/theme3_blue"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:id="@+id/first_tile"
-            />
-        <ImageView
-            android:background="@color/theme3_white"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-        <ImageView
-            android:background="@color/theme3_dark_grey"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_height="0dp"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <ImageView
-            android:background="@color/theme3_pink"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-        <ImageView
-            android:background="@color/theme_purple"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-        <ImageView
-            android:background="@color/theme3_grey"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_height="0dp"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <ImageView
-            android:background="@color/theme3_grey"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-        <ImageView
-            android:background="@color/theme3_blue"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-        <ImageView
-            android:background="@color/theme3_pink"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            />
-    </LinearLayout>
+   <android.support.v7.widget.RecyclerView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:background="@color/theme3_dark_grey"
+       android:id="@+id/grid_view"
+       />
 </LinearLayout>

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.hardware.camera2.CameraManager;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -41,24 +44,31 @@ import java.io.IOException;
 public class AddGhostActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener
 {
 
-
-
-    private String selectedImagePath;
-
-    private GoogleApiClient mGoogleApiClient = null;
-
-    private Uri selectedImage;
-
-    // The user should be logged in right now. So this
-    // shouldnt need to be modified too much
+    // ----- Services -----
+    //   Firebase
     private FirebaseAuth authorization;
     private StorageReference storage;
-    private FirebaseDatabase database;
+    //   Google
+    private GoogleApiClient mGoogleApiClient = null;
+    // --------------------
 
-    private Location location = null;
 
+    // ----- Image/Camera -----
+    private String selectedImagePath;
+    private Uri selectedImage;    // TODO: Change this to a bitmap
+    private CameraManipulator camera;
+    // ------------------------
+
+
+    // ----- Flags/Constants -----
     private final int LOCATION_GRANTED = 2;
     private static final int SELECT_PICTURE = 1;
+    // ----------------------------
+
+
+    // ----- GPS -----
+    private Location location = null;
+    // ---------------
 
 
     @Override
@@ -66,17 +76,11 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_ghost);
 
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        // Create my own camera class
+        camera = new CameraManipulator((CameraManager) getSystemService(Context.CAMERA_SERVICE));
 
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED)
-        {
-            Log.d("Good", "GOOD PERMISSION");
-        }
-        else
-        {
-            Log.d("Bad", "BAD PERMISSION");
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_GRANTED);
-        }
+        // Check for GPS and Camera Permissions
+        checkPermissions();
 
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
@@ -108,72 +112,10 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
             }
         });
 
-        findViewById(R.id.update_location).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                if (location != null)
-                {
-                    hideFields();
-
-                    StringBuilder display = new StringBuilder();
-
-                    display.append("Lat:");
-                    display.append(location.getLatitude());
-                    display.append(" Long:");
-                    display.append(location.getLongitude());
-
-                    Context context = getApplicationContext();
-                    CharSequence text = display.toString();
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast toast = Toast.makeText(context, text, duration);
-                    //toast.show();
-
-                    EditText fileName = (EditText) findViewById(R.id.tag_name_id);
-
-                    // Get the references to the applicable fields
-                    StorageReference ref = storage.child(fileName.getText().toString());
-
-                    String[] tokens = authorization.getCurrentUser().getEmail().split("@");
-
-                    String userPath = tokens[0];
-
-                    DatabaseReference dref = database.getReference("images/"+userPath+"/url");
-                    //DatabaseReference latRef = database.getReference("images/"+userPath+"/lat");
-                    //DatabaseReference longRef = database.getReference("images/"+userPath+"/long");
-
-                    // Add the image to the database
-                    dref.setValue(fileName.getText().toString());
-                    //latRef.setValue(location.getLatitude());
-                    //longRef.setValue(location.getLongitude());
-
-                    ref.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
-                    {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
-                        {
-                            Intent intent = new Intent(AddGhostActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-                }
-                else
-                {
-                    Context context = getApplicationContext();
-                    CharSequence text = "It was null";
-                    int duration = Toast.LENGTH_SHORT;
-
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
-                }
-            }
-        });
+        findViewById(R.id.update_location).setOnClickListener(makeUploadListener());
 
         // -- Initialize storage and Database --
         storage = FirebaseStorage.getInstance().getReference();
-        database = FirebaseDatabase.getInstance();
         authorization = FirebaseAuth.getInstance();
         // ------------------------
 
@@ -199,24 +141,20 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
             Uri uri = data.getData();
             selectedImage = uri;
 
-            try
-            {
-                // Get the location of the image and then set the image view to the
-                // image as a bmp
-                Bitmap bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+            // Get the location of the image and then set the image view to the
+            // image as a bmp
 
-                ImageView img = (ImageView) findViewById(R.id.preview_img_view);
+            // TODO: Add image rotation
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
 
-                img.setImageBitmap(bmp);
+            ImageView img = (ImageView) findViewById(R.id.preview_img_view);
 
-                Button bttn = (Button) findViewById(R.id.add_img_bttn);
-                bttn.setText("Change");
+            Glide.with(AddGhostActivity.this).load(uri).centerCrop().into(img);
 
-            }
-            catch (IOException error)
-            {
-                error.printStackTrace();
-            }
+            Button bttn = (Button) findViewById(R.id.add_img_bttn);
+            bttn.setText("Change");
+
         }
     }
 
@@ -303,6 +241,7 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
     @Override
     public void onRequestPermissionsResult (int requestCode, String[] permissions, int[] grantResults)
     {
+        // TODO: ADD CAMERA PERMISSIONS
         if (requestCode == LOCATION_GRANTED)
         {
             // Got permission to use the location
@@ -312,10 +251,59 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
     }
 
 
+    // ----- Upload Logic -----
+    private View.OnClickListener makeUploadListener()
+    {
+        return new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if (location != null)
+                {
+                    hideFields();
+
+                    EditText fileName = (EditText) findViewById(R.id.tag_name_id);
+
+                    String[] tokens = authorization.getCurrentUser().getEmail().split("@");
+
+                    String userPath = tokens[0];
+
+                    String filename = DatabaseManager.getInstance().addImageToUser(userPath, fileName.getText().toString());
+
+                    StorageReference ref = storage.child(filename);
+
+                    ref.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
+                    {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                        {
+                            showFields();
+                            Intent intent = new Intent(AddGhostActivity.this, MainActivity.class);
+                            AddGhostActivity.this.finish();
+                            startActivity(intent);
+                        }
+                    });
+                }
+                else
+                {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Internal Error - Unable to pin";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            }
+        };
+    }
+    // ------------------------
+
+
+    // ----- UI Manipulation -----
     private void hideFields()
     {
         findViewById(R.id.add_img_bttn).setVisibility(View.INVISIBLE);
-        findViewById(R.id.preview_img_view).setVisibility(View.INVISIBLE);
         findViewById(R.id.update_location).setVisibility(View.INVISIBLE);
         findViewById(R.id.duration_bttn).setVisibility(View.INVISIBLE);
         findViewById(R.id.tag_name_id).setVisibility(View.INVISIBLE);
@@ -325,11 +313,25 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
     private void showFields()
     {
         findViewById(R.id.add_img_bttn).setVisibility(View.VISIBLE);
-        findViewById(R.id.preview_img_view).setVisibility(View.VISIBLE);
         findViewById(R.id.update_location).setVisibility(View.VISIBLE);
         findViewById(R.id.duration_bttn).setVisibility(View.VISIBLE);
         findViewById(R.id.tag_name_id).setVisibility(View.VISIBLE);
         findViewById(R.id.upload_progress).setVisibility(View.INVISIBLE);
     }
+    // ---------------------------
+
+
+    // ----- Permission Checks -----
+    private void checkPermissions()
+    {
+        // TODO: ADD CAMERA PERMISSIONS
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_GRANTED);
+        }
+    }
+    // -----------------------------
 
 }

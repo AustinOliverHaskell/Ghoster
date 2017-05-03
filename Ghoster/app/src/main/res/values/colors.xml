@@ -28,4 +28,6 @@
     <color name="theme2_blue">#1982c4</color>
     <color name="theme2_white">#ffffff</color>
 
+    <color name="black_overlay">#66000000</color>
+
 </resources>

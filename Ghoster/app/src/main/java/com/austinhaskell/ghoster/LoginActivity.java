@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity
 
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authListener;
-    TextView errorLabel;
 
     // ----- Initialization code -----
     @Override
@@ -57,8 +56,6 @@ public class LoginActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        errorLabel = (TextView) findViewById(R.id.error_label);
 
         // -- Init Firebase objects --
         auth = FirebaseAuth.getInstance();
@@ -76,7 +73,6 @@ public class LoginActivity extends AppCompatActivity
                 }
                 else
                 {
-                    auth.getCurrentUser().sendEmailVerification();
                     // user is logged in
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -87,32 +83,12 @@ public class LoginActivity extends AppCompatActivity
 
 
         // -- Button Listeners --
-        Button signUp = (Button) findViewById(R.id.sign_up_bttn);
+        TextView signUp = (TextView) findViewById(R.id.sign_up_bttn);
         signUp.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText username = (EditText) findViewById(R.id.username_text);
-                EditText password = (EditText) findViewById(R.id.password_text);
-
-                if (username.getText() == null ||
-                        username.getText().toString().equals("Username") ||
-                        username.getText().toString().equals(""))
-                {
-                    errorLabel.setText("Invalid Username");
-                }
-                else if (password.getText() == null ||
-                        password.getText().toString().equals("Password") ||
-                        password.getText().toString().equals(""))
-                {
-                    errorLabel.setText("Invalid Password");
-                }
-                else
-                {
-                    errorLabel.setText("");
-                    findViewById(R.id.login_progress).setVisibility(View.VISIBLE);
-                    createAccount(username.getText().toString(), password.getText().toString());
-                    findViewById(R.id.login_progress).setVisibility(View.INVISIBLE);
-                }
+                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -125,24 +101,15 @@ public class LoginActivity extends AppCompatActivity
                 EditText username = (EditText) findViewById(R.id.username_text);
                 EditText password = (EditText) findViewById(R.id.password_text);
 
-                if (username.getText() == null ||
-                        username.getText().toString().equals("Username") ||
-                        username.getText().toString().equals(""))
+                if (fieldsFilled())
                 {
-                    errorLabel.setText("Invalid Username");
-                }
-                else if (password.getText() == null ||
-                        password.getText().toString().equals("Password") ||
-                        password.getText().toString().equals(""))
-                {
-                    errorLabel.setText("Invalid Password");
-                }
-                else
-                {
-                    errorLabel.setText("");
                     findViewById(R.id.login_progress).setVisibility(View.VISIBLE);
                     login(username.getText().toString(), password.getText().toString());
                     findViewById(R.id.login_progress).setVisibility(View.INVISIBLE);
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Missing Text Field", Toast.LENGTH_SHORT);
                 }
             }
             });
@@ -168,24 +135,7 @@ public class LoginActivity extends AppCompatActivity
     // -----------------------------------
 
 
-    // ----- Create account code -----
-    private void createAccount(String email, String password)
-    {
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task)
-                    {
-                        if (!task.isSuccessful())
-                        {
-                            Toast.makeText(LoginActivity.this,
-                                    task.getException().toString(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
+    // ----- Login code -----
     private void login(String email, String password)
     {
         auth.signInWithEmailAndPassword(email, password)
@@ -196,19 +146,27 @@ public class LoginActivity extends AppCompatActivity
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
+                        if (!task.isSuccessful())
+                        {
                             Toast.makeText(LoginActivity.this,
                                     task.getException().toString(),
                                     Toast.LENGTH_SHORT).show();
                         }
-
-
-
-                        // ...
                     }
                 });
     }
-
     // -------------------------------
+
+
+
+    // ----- Field Verification -----
+    private boolean fieldsFilled()
+    {
+        String username = ((TextView) findViewById(R.id.username_text)).toString();
+        String password = ((TextView) findViewById(R.id.password_text)).toString();
+
+        return (!username.equals("") && !password.equals(""));
+    }
+    // ------------------------------
 }
 

@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:orientation="vertical"
+
     android:background="@color/theme3_purple"
-    android:tileMode="repeat"
     >
 
     <ProgressBar
@@ -17,69 +14,70 @@
         android:layout_height="wrap_content"
         android:visibility="invisible"
         android:id="@+id/upload_progress"
+        android:layout_alignParentBottom="true"
         />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            >
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter a title here"
-            android:id="@+id/tag_name_id"
-            />
+
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id = "@+id/preview_img_view"
-            android:src="@drawable/placeholder_image_1"
+            android:background="@color/theme3_purple"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             />
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title"
+            android:id="@+id/tag_name_id"
+            android:maxLength="40"
+            android:maxLines="1"
+            android:textSize="12sp"
+            />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            >
             <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:orientation="horizontal"
                 >
                 <Button
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Add Image"
                     android:id="@+id/add_img_bttn"
                     android:background="@color/buttonBackground"
                     android:textColor="@color/buttonText"
+                    android:gravity="center"
                      />
 
                 <Button
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Pin"
                     android:id="@+id/update_location"
                     android:background="@color/buttonBackground"
-                    android:textColor="@color/buttonText"/>
+                    android:textColor="@color/buttonText"
+                    />
 
                 <Button
                     android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:text="Duration"
                     android:id="@+id/duration_bttn"
                     android:background="@color/buttonBackground"
                     android:textColor="@color/buttonText"
+                    android:layout_weight="1"
                     />
             </LinearLayout>
+        </RelativeLayout>
 
-
-
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+</RelativeLayout>

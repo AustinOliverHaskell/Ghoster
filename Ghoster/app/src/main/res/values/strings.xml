@@ -92,4 +92,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <string name="title_activity_image_view">ImageViewActivity</string>
+    <string name="dummy_button">LIKE</string>
 </resources>

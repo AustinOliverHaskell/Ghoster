@@ -39,7 +39,18 @@
         <activity android:name=".AddGhostActivity" />
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:label="@string/title_activity_login" />
+        <activity android:name=".SignupActivity" />
+        <activity
+            android:name=".ImageViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_image_view"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/FullscreenTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.austinhaskell.ghoster.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

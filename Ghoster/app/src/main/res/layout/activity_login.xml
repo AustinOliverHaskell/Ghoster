@@ -46,26 +46,11 @@
                 android:layout_weight="1"
                 android:background="@color/buttonBackground"
                 android:text="Login"
-                android:textColor="@color/buttonText" />
+                android:textColor="@color/buttonText"
+                android:textAlignment="center"
+                />
 
-            <Button
-                android:id="@+id/sign_up_bttn"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/buttonBackground"
-                android:text="Sign up"
-                android:textColor="@color/buttonText" />
         </LinearLayout>
-
-         <TextView
-             android:id="@+id/error_label"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:text=""
-             android:textColor="@color/theme3_grey"
-             android:textAlignment="center"
-             />
 
         <ProgressBar
             android:id="@+id/login_progress"
@@ -73,6 +58,28 @@
             android:layout_width="match_parent"
             android:visibility="invisible"
             />
+
+        <TextView
+            android:id="@+id/signup_text"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Don't have an account?"
+            android:textColor="@color/theme3_grey"
+            android:textAlignment="center"
+            android:clickable="false"
+            android:textSize="14sp"
+            />
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Sign up"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            android:textColor="@color/theme3_blue"
+            android:id="@+id/sign_up_bttn"
+            />
+
+
 
     </LinearLayout>
 

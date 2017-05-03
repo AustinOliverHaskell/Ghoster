@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.austinhaskell.ghoster.SignupActivity"
+    android:background="@color/theme3_purple"
+    >
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="Name"
+        android:textColor="@color/theme3_grey"
+        android:id="@+id/name_text"
+        />
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="Email"
+        android:textColor="@color/theme3_grey"
+        android:id="@+id/email_text"
+        />
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="Password"
+        android:textColor="@color/theme3_grey"
+        android:id="@+id/password_text"
+        android:inputType="textPassword"
+        />
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="Confirm Password"
+        android:textColor="@color/theme3_grey"
+        android:id="@+id/password_confirm_text"
+        android:inputType="textPassword"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@color/theme3_purple"
+            android:textColor="@color/theme3_grey"
+            android:text="Create Account"
+            android:id="@+id/submit_bttn"
+            style="?android:attr/borderlessButtonStyle"
+            />
+
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:background="@color/theme3_purple"
+            android:textColor="@color/theme3_grey"
+            android:id="@+id/cancel_bttn"
+            style="?android:attr/borderlessButtonStyle"
+            />
+    </LinearLayout>
+
+    <ProgressBar
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:visibility="invisible"
+        android:id="@+id/signup_progress"
+        />
+
+
+</LinearLayout>

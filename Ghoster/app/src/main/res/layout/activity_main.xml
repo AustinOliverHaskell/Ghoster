@@ -30,6 +30,7 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/add_action_img"
         android:backgroundTint="@color/theme3_purple"
+        android:background="@color/theme3_purple"
         />
 
 </android.support.design.widget.CoordinatorLayout>
