@@ -238,8 +238,7 @@ public class MainActivity extends AppCompatActivity
                                     // Successfully downloaded data to local file
                                     // ...
                                     paths.add(uri);
-
-
+                                    uriList = paths;
                                 }
                             }).addOnFailureListener(new OnFailureListener()
                     {
@@ -251,7 +250,6 @@ public class MainActivity extends AppCompatActivity
                     });
                 }
 
-                uriList = paths;
                 // ...
             }
 
