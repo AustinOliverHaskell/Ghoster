@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">SuperSimpleEDHCounter</string>
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="poison_text">Poison</string>
+    <string name="life_text">Life</string>
+    <string name="commander_text">Commander Damage</string>
+
+    <string name="title_activity_extras">Extras</string>
+
+</resources>

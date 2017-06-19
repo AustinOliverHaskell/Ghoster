@@ -1,0 +1,224 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
+    tools:context="ghoster.supersimpleedhcounter.main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:background="@color/life">
+
+            <Button
+                android:id="@+id/life_increase"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="-"
+                android:textColor="@color/text"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/life_counter"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:background="@android:color/transparent"
+                    android:cursorVisible="false"
+                    android:gravity="center"
+                    android:text="40"
+                    android:textAlignment="center"
+                    android:textColor="@color/text"
+                    android:textSize="30sp"
+                    />
+
+                <TextView
+                    android:id="@+id/lifefootnote_counter"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/life_text"
+                    android:textAlignment="center"
+                    android:textColor="@color/footnote"
+                    android:textSize="15sp"
+
+                    />
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/life_decrease"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:text="+"
+                android:textColor="@color/text"
+                android:textSize="20sp"
+
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/commander"
+            android:layout_weight="2"
+            >
+            <Button
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/commander_increase"
+                android:text="-"
+                android:textSize="20sp"
+                android:background="@android:color/transparent"
+                android:textColor="@color/text"
+                />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="3"
+                >
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:text="0"
+                    android:textSize="30sp"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:id="@+id/commander_counter"
+                    android:textColor="@color/text"
+                    android:cursorVisible="false"
+                    android:background="@android:color/transparent"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/commander_text"
+                    android:textSize="15sp"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:id="@+id/commander_footnote"
+                    android:textColor="@color/footnote"
+
+                    />
+            </LinearLayout>
+
+            <Button
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/commander_decrease"
+                android:text="+"
+                android:textSize="20sp"
+                android:background="@android:color/transparent"
+                android:textColor="@color/text"
+
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/poison"
+            android:layout_weight="2"
+            >
+            <Button
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/poison_increase"
+                android:text="-"
+                android:textSize="20sp"
+                android:background="@android:color/transparent"
+                android:textColor="@color/text"
+                />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="3"
+                >
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:text="0"
+                    android:textSize="30sp"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:id="@+id/poison_counter"
+                    android:textColor="@color/text"
+                    android:cursorVisible="false"
+                    android:background="@android:color/transparent"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/poison_text"
+                    android:textSize="15sp"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:id="@+id/poisonfootnote_counter"
+                    android:textColor="@color/footnote"
+
+                    />
+            </LinearLayout>
+
+            <Button
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/poison_decrease"
+                android:text="+"
+                android:textSize="20sp"
+                android:background="@android:color/transparent"
+                android:textColor="@color/text"
+
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/utility"
+            android:layout_weight="0.5"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:text="Extras"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:id="@+id/utility"
+                android:textColor="@color/text"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
