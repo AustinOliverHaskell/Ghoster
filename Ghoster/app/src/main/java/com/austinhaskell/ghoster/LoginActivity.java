@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -101,11 +102,12 @@ public class LoginActivity extends AppCompatActivity
                 EditText username = (EditText) findViewById(R.id.username_text);
                 EditText password = (EditText) findViewById(R.id.password_text);
 
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
                 if (fieldsFilled())
                 {
-                    findViewById(R.id.login_progress).setVisibility(View.VISIBLE);
                     login(username.getText().toString(), password.getText().toString());
-                    findViewById(R.id.login_progress).setVisibility(View.INVISIBLE);
                 }
                 else
                 {
@@ -138,6 +140,9 @@ public class LoginActivity extends AppCompatActivity
     // ----- Login code -----
     private void login(String email, String password)
     {
+        findViewById(R.id.login_bttn).setVisibility(View.INVISIBLE);
+        findViewById(R.id.login_bttn).setClickable(false);
+
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -151,6 +156,8 @@ public class LoginActivity extends AppCompatActivity
                             Toast.makeText(LoginActivity.this,
                                     task.getException().toString(),
                                     Toast.LENGTH_SHORT).show();
+                            findViewById(R.id.login_bttn).setVisibility(View.VISIBLE);
+                            findViewById(R.id.login_bttn).setClickable(true);
                         }
                     }
                 });
@@ -160,6 +167,13 @@ public class LoginActivity extends AppCompatActivity
 
 
     // ----- Field Verification -----
+
+    /**
+     * GUI function that checks to make sure that all of the
+     * fields are filled out properly
+     *
+     * @return true if the fields are good to go, false if else
+     */
     private boolean fieldsFilled()
     {
         String username = ((TextView) findViewById(R.id.username_text)).toString();

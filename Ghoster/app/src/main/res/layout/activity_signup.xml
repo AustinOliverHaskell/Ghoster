@@ -54,35 +54,44 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-        <Button
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:background="@color/theme3_purple"
-            android:textColor="@color/theme3_grey"
-            android:text="Create Account"
-            android:id="@+id/submit_bttn"
-            style="?android:attr/borderlessButtonStyle"
-            />
+            >
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:id="@+id/signup_progress"
+                />
 
-        <Button
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="Cancel"
-            android:background="@color/theme3_purple"
-            android:textColor="@color/theme3_grey"
-            android:id="@+id/cancel_bttn"
-            style="?android:attr/borderlessButtonStyle"
-            />
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                >
+                <Button
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/theme3_purple"
+                    android:textColor="@color/theme3_grey"
+                    android:text="Create Account"
+                    android:id="@+id/submit_bttn"
+                    style="?android:attr/borderlessButtonStyle"
+                    />
+
+                <Button
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="Cancel"
+                    android:background="@color/theme3_purple"
+                    android:textColor="@color/theme3_grey"
+                    android:id="@+id/cancel_bttn"
+                    style="?android:attr/borderlessButtonStyle"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
-
-    <ProgressBar
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:visibility="invisible"
-        android:id="@+id/signup_progress"
-        />
-
-
 </LinearLayout>

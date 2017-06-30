@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/photo_grouping_nav_drawer"
+        >
+        <item
+            android:id="@+id/saved_photos"
+            android:title="Saved Photos"
+            />
+        <item
+            android:id="@+id/postcards"
+            android:title="Postcards" />
+
+    </group>
+
+    <item
+        android:title="Friends"
+        android:id="@+id/friends_grouping_nav_drawer">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:title="Pending Requests"
+                android:icon="@drawable/ic_notifications_black_24dp"
+                />
+            <item
+                android:id="@+id/nav_send"
+                android:title="Send Request"
+                android:icon="@drawable/ic_person_add_black_36dp"
+                />
+        </menu>
+    </item>
+
+    <item
+        android:title="Account"
+        android:id="@+id/account_grouping_nav_drawer"
+        >
+        <menu>
+            <item
+                android:id="@+id/edit_account"
+                android:title="Edit Account"
+                android:icon="@drawable/ic_account_circle_black_36dp"
+                >
+            </item>
+
+            <item
+                android:id="@+id/account_settings"
+                android:title="Settings"
+                android:icon="@drawable/ic_settings_black_36dp"
+                >
+            </item>
+        </menu>
+    </item>
+
+    <group
+        android:id="@+id/other_grouping_nav_drawer"
+        >
+        <menu>
+            <item
+                android:id="@+id/about"
+                android:title="About">
+            </item>
+        </menu>
+    </group>
+
+</menu>

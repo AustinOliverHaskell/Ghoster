@@ -9,23 +9,62 @@
     android:background="@color/theme3_purple"
     >
 
-    <ProgressBar
+
+    <com.google.android.cameraview.CameraView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/camera_view"
+        app:autoFocus="true"
+        app:aspectRatio="4:3"
+        app:facing="back"
+        app:flash="auto"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
-        android:id="@+id/upload_progress"
-        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_loop_white_36dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:id="@+id/change_camera_bttn"
         />
 
 
+    <LinearLayout
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        android:id="@+id/photo_taken_bttns"
+        android:visibility="invisible"
+        android:clickable="false"
+        >
 
         <ImageView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/delete_taken_photo_bttn"
+            android:src="@drawable/ic_delete_white_36dp"
+            />
+
+        <ImageView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/draw_button"
+            android:src="@drawable/ic_gesture_white_36dp"
+            android:layout_marginTop="16dp"
+            />
+
+    </LinearLayout>
+
+        <ProgressBar
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id = "@+id/preview_img_view"
-            android:background="@color/theme3_purple"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:id="@+id/upload_progress"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16dp"
             />
 
         <EditText
@@ -36,6 +75,7 @@
             android:maxLength="40"
             android:maxLines="1"
             android:textSize="12sp"
+            android:visibility="invisible"
             />
 
         <RelativeLayout
@@ -46,17 +86,9 @@
             <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:id="@+id/bottom_buttons_add_ghost"
+                android:visibility="invisible"
                 >
-                <Button
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Add Image"
-                    android:id="@+id/add_img_bttn"
-                    android:background="@color/buttonBackground"
-                    android:textColor="@color/buttonText"
-                    android:gravity="center"
-                     />
 
                 <Button
                     android:layout_width="0dp"
@@ -79,5 +111,14 @@
                     />
             </LinearLayout>
         </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_album_white_48dp"
+        android:id="@+id/camera_take_photo"
+        android:layout_marginBottom="16dp"
+        />
 
 </RelativeLayout>

@@ -20,6 +20,7 @@
     <color name="theme3_blue">#8884FF</color>
     <color name="theme3_pink">#D7BCE8</color>
     <color name="theme3_white">#ffffff</color>
+    <color name="theme3_bttn_transparent">#575d576b</color>
 
     <color name="theme2_purple">#5e35b1</color>
     <color name="theme2_red">#ff595e</color>

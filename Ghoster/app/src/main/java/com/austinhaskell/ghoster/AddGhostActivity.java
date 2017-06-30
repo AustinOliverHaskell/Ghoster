@@ -1,15 +1,23 @@
 package com.austinhaskell.ghoster;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.camera2.CameraManager;
 import android.location.Location;
+import android.media.Image;
 import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.provider.MediaStore;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -18,19 +26,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
+
+import com.google.android.cameraview.CameraView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -39,80 +47,149 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
-public class AddGhostActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener
+import id.zelory.compressor.Compressor;
+import id.zelory.compressor.FileUtil;
+
+public class AddGhostActivity extends Activity implements LocationSubject
 {
 
     // ----- Services -----
-    //   Firebase
     private FirebaseAuth authorization;
     private StorageReference storage;
-    //   Google
-    private GoogleApiClient mGoogleApiClient = null;
     // --------------------
 
-
     // ----- Image/Camera -----
-    private String selectedImagePath;
-    private Uri selectedImage;    // TODO: Change this to a bitmap
-    private CameraManipulator camera;
+    private Uri selectedImage;
     // ------------------------
-
 
     // ----- Flags/Constants -----
     private final int LOCATION_GRANTED = 2;
+    private final int CAMERA_GRANTED = 3;
     private static final int SELECT_PICTURE = 1;
     // ----------------------------
 
-
     // ----- GPS -----
     private Location location = null;
+    private LocationController controller;
     // ---------------
+
+    // ----- Camera -----
+    private CameraView camera;
+    private byte[] imageData;
+    private boolean photoTaken;
+    private final int COMPRESSION_RATE = 70;
+    // ------------------
+
+    // ----- General UI -----
+    private LinearLayout postPhotoTakenUI;
+    private LinearLayout photoEditUI;
+    private ImageView    takePhotoButton;
+    private ImageView    flipCameraButton;
+    private ImageView    deletePhotoButton;
+    // ----------------------
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_ghost);
 
-        // Create my own camera class
-        camera = new CameraManipulator((CameraManager) getSystemService(Context.CAMERA_SERVICE));
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        //Remove notification bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // Check for GPS and Camera Permissions
         checkPermissions();
 
-        // Create an instance of GoogleAPIClient.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
+        setContentView(R.layout.activity_add_ghost);
 
-        // Add an event listener to out add image button
-        findViewById(R.id.add_img_bttn).setOnClickListener(new View.OnClickListener()
+        // Add listeners for the camera and the buttons to go along with it
+        camera = (CameraView) findViewById(R.id.camera_view);
+        postPhotoTakenUI = (LinearLayout) findViewById(R.id.bottom_buttons_add_ghost);
+        photoEditUI      = (LinearLayout) findViewById(R.id.photo_taken_bttns);
+        takePhotoButton  = (ImageView) findViewById(R.id.camera_take_photo);
+        flipCameraButton = (ImageView) findViewById(R.id.change_camera_bttn);
+        deletePhotoButton= (ImageView) findViewById(R.id.delete_taken_photo_bttn);
+        photoTaken = false;
+        imageData  = null;
+
+
+        // GPS Code
+        controller = new LocationController(getApplicationContext(), this);
+
+
+        findViewById(R.id.update_location).setOnClickListener(makeUploadListener());
+
+        flipCameraButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(View view)
+            public void onClick(View v)
             {
-                // Create a generic intent
-                Intent intent = new Intent();
+                // Animate the button to rotate before changing cameras
+                flipCameraButton
+                        .animate()
+                        .rotation(360)
+                        .setDuration(250)
+                        .setInterpolator(new LinearInterpolator())
+                        .setListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
 
-                // set the type
-                intent.setType("image/*");
+                            }
 
-                // set the action that we want preformed by the intent we are calling
-                intent.setAction(Intent.ACTION_GET_CONTENT);
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                flipCameraButton.setRotation(0);
+                                switchCamera();
+                            }
 
-                // Start the activity
-                startActivityForResult(Intent.createChooser(intent,
-                        "Select Picture"), SELECT_PICTURE);
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
+
+
+
+
             }
         });
 
-        findViewById(R.id.update_location).setOnClickListener(makeUploadListener());
+
+        takePhotoButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                pictureTakenUI();
+                photoTaken = true;
+                takePhoto();
+            }
+        });
+
+        deletePhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                cameraUI();
+                photoTaken = false;
+                camera.start();
+            }
+        });
+
+        camera.addCallback(mCallback);
 
         // -- Initialize storage and Database --
         storage = FirebaseStorage.getInstance().getReference();
@@ -141,114 +218,107 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
             Uri uri = data.getData();
             selectedImage = uri;
 
+            // TODO: Finnish this file compression
+           // File imgFile = FileUtil.from(this, data.getData();
+
+            //imgFile = Compressor.getDefault(this).compressToBitmap(imgFile);
+
             // Get the location of the image and then set the image view to the
             // image as a bmp
 
-            // TODO: Add image rotation
             Matrix matrix = new Matrix();
             matrix.postRotate(90);
 
-            ImageView img = (ImageView) findViewById(R.id.preview_img_view);
-
-            Glide.with(AddGhostActivity.this).load(uri).centerCrop().into(img);
-
-            Button bttn = (Button) findViewById(R.id.add_img_bttn);
-            bttn.setText("Change");
 
         }
     }
 
 
-    // Documentation
-    /* https://developers.google.com/android/reference/com/google/android/gms/common/api/GoogleApiClient.ConnectionCallbacks
-    * After calling connect(), this method will be invoked asynchronously when
-    * the connect request has successfully completed. After this callback, the
-    * application can make requests on other methods provided by the client and
-    * expect that no user intervention is required to call methods that use account
-     * and scopes provided to the client constructor.
-    * */
-    @Override
-    public void onConnected(@Nullable Bundle bundle)
-    {
-        LocationRequest local = new LocationRequest();
-
-        local.setInterval(10000);
-        local.setFastestInterval(5000);
-        local.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        try
-        {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, local, this);
-        }
-        catch (SecurityException error)
-        {
-            error.printStackTrace();
-        }
-    }
 
 
-    /* Documentation
-    * Called when the client is temporarily in a disconnected state. This can happen
-    * if there is a problem with the remote service (e.g. a crash or resource problem
-    * causes it to be killed by the system). When called, all requests have been canceled
-    * and no outstanding listeners will be executed. GoogleApiClient will automatically
-    * attempt to restore the connection. Applications should disable UI components that
-    * require the service, and wait for a call to onConnected(Bundle) to re-enable them.
-    * */
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
-    {
-        Context context = getApplicationContext();
-        CharSequence text = "Connection Failed";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-    }
-
-    // Method to be called at the start of this activity
-    // this is useful because we need to connect to the location
-    // services api
+    // ----- Activity Lifecycle Methods -----
     @Override
     public void onStart()
     {
-        mGoogleApiClient.connect();
+        controller.connect();
         super.onStart();
     }
 
-    // Method that is called on the destruction of this activity
-    // need to disconnect from the api that we connected to at the
-    // start of this activity
+
     @Override
     public void onStop()
     {
-        mGoogleApiClient.disconnect();
+        controller.disconnect();
         super.onStop();
     }
 
     @Override
-    public void onLocationChanged(Location location)
+    public void onResume()
     {
-        this.location = location;
+        super.onResume();
+        camera.start();
     }
 
     @Override
+    public void onPause()
+    {
+        super.onPause();
+        camera.stop();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if (photoTaken)
+        {
+            cameraUI();
+            photoTaken = false;
+            camera.start();
+        }
+        else
+        {
+            finish();
+        }
+
+    }
+
+    // --------------------------------------
+
+
+    // ----- Permission Functions -----
+    @Override
     public void onRequestPermissionsResult (int requestCode, String[] permissions, int[] grantResults)
     {
-        // TODO: ADD CAMERA PERMISSIONS
         if (requestCode == LOCATION_GRANTED)
         {
             // Got permission to use the location
             finish();
             startActivity(getIntent());
         }
+        else if (requestCode == CAMERA_GRANTED)
+        {
+            finish();
+            startActivity(getIntent());
+        }
     }
+
+    private void checkPermissions()
+    {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_GRANTED);
+        }
+
+        if (cameraPermission != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_GRANTED);
+        }
+    }
+    // --------------------------------
+
 
 
     // ----- Upload Logic -----
@@ -266,14 +336,17 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
                     EditText fileName = (EditText) findViewById(R.id.tag_name_id);
 
                     String[] tokens = authorization.getCurrentUser().getEmail().split("@");
-
                     String userPath = tokens[0];
 
-                    String filename = DatabaseManager.getInstance().addImageToUser(userPath, fileName.getText().toString());
+                    String filename = DatabaseManager.getInstance().addImageToPublic(
+                            userPath,
+                            fileName.getText().toString(),
+                            location.getLatitude(),
+                            location.getLongitude());
 
                     StorageReference ref = storage.child(filename);
 
-                    ref.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
+                    ref.putBytes(createTemporaryImageFile()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
                     {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
@@ -303,7 +376,6 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
     // ----- UI Manipulation -----
     private void hideFields()
     {
-        findViewById(R.id.add_img_bttn).setVisibility(View.INVISIBLE);
         findViewById(R.id.update_location).setVisibility(View.INVISIBLE);
         findViewById(R.id.duration_bttn).setVisibility(View.INVISIBLE);
         findViewById(R.id.tag_name_id).setVisibility(View.INVISIBLE);
@@ -312,26 +384,132 @@ public class AddGhostActivity extends AppCompatActivity implements GoogleApiClie
 
     private void showFields()
     {
-        findViewById(R.id.add_img_bttn).setVisibility(View.VISIBLE);
         findViewById(R.id.update_location).setVisibility(View.VISIBLE);
         findViewById(R.id.duration_bttn).setVisibility(View.VISIBLE);
         findViewById(R.id.tag_name_id).setVisibility(View.VISIBLE);
         findViewById(R.id.upload_progress).setVisibility(View.INVISIBLE);
     }
+
+    private void pictureTakenUI()
+    {
+        photoEditUI.setVisibility(View.VISIBLE);
+        photoEditUI.setClickable(true);
+        flipCameraButton.setVisibility(View.INVISIBLE);
+        flipCameraButton.setClickable(false);
+        takePhotoButton.setVisibility(View.INVISIBLE);
+        takePhotoButton.setClickable(false);
+        postPhotoTakenUI.setVisibility(View.VISIBLE);
+        postPhotoTakenUI.setClickable(true);
+    }
+
+    private void cameraUI()
+    {
+        photoEditUI.setVisibility(View.INVISIBLE);
+        photoEditUI.setClickable(false);
+        flipCameraButton.setVisibility(View.VISIBLE);
+        flipCameraButton.setClickable(true);
+        takePhotoButton.setVisibility(View.VISIBLE);
+        takePhotoButton.setClickable(true);
+        postPhotoTakenUI.setVisibility(View.INVISIBLE);
+        postPhotoTakenUI.setClickable(false);
+    }
+
     // ---------------------------
 
 
-    // ----- Permission Checks -----
-    private void checkPermissions()
+    // ----- Location Functions -----
+    @Override
+    public void updateLocation(Location location)
     {
-        // TODO: ADD CAMERA PERMISSIONS
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        this.location = location;
+    }
 
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_GRANTED);
-        }
+    @Override
+    public void locationStarted()
+    {
+        // Callback function for the location object
+        // no content needed here
     }
     // -----------------------------
+
+
+    // ----- Camera Functions -----
+    public void switchCamera()
+    {
+        if (camera.getFacing() == CameraView.FACING_BACK)
+        {
+            camera.setFacing(CameraView.FACING_FRONT);
+        }
+        else if (camera.getFacing() == CameraView.FACING_FRONT)
+        {
+            camera.setFacing(CameraView.FACING_BACK);
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Cannot Switch Cameras", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void takePhoto()
+    {
+        camera.takePicture();
+    }
+
+    private CameraView.Callback mCallback
+            = new CameraView.Callback() {
+
+        @Override
+        public void onCameraOpened(CameraView cameraView) {
+        }
+
+        @Override
+        public void onCameraClosed(CameraView cameraView) {
+        }
+
+        @Override
+        public void onPictureTaken(CameraView cameraView, final byte[] data)
+        {
+            Log.d("onPictureTaken", "onPictureTaken " + data.length);
+
+            camera.stop();
+
+            imageData = data;
+        }
+    };
+    // ----------------------------
+
+
+    // ----- Image Methods -----
+    public byte[] createTemporaryImageFile()
+    {
+        byte[] retVal = null;
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+
+        Bitmap bmp = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+
+        if (camera.getFacing() == CameraView.FACING_FRONT)
+        {
+            bmp = rotateBitmap(bmp, 270);
+        }
+        else
+        {
+            bmp = rotateBitmap(bmp, 90);
+        }
+
+        bmp.compress(Bitmap.CompressFormat.JPEG, COMPRESSION_RATE, outStream);
+
+        retVal = outStream.toByteArray();
+
+        return retVal;
+    }
+
+    public static Bitmap rotateBitmap(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+    // -------------------------
 
 }

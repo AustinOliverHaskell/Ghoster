@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -56,9 +57,8 @@ public class SignupActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submit.setClickable(false);
-                changeUIVisable(View.INVISIBLE);
-                findViewById(R.id.signup_progress).setVisibility(View.VISIBLE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                 // Check fields
                 if (allFieldsFull() && passwordsMatch())
@@ -74,9 +74,6 @@ public class SignupActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "All fields are required", Toast.LENGTH_SHORT).show();
                 }
 
-                submit.setClickable(true);
-                changeUIVisable(View.VISIBLE);
-                findViewById(R.id.signup_progress).setVisibility(View.INVISIBLE);
             }
         });
 
@@ -92,8 +89,29 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     // --- Create Account ---
+
+    /**
+     * This function is responsible for creating the email login through facebook,
+     * this is called after both of the checks on fields.
+     *
+     *
+     * @param email email to create the account with
+     * @param password password to create the account with
+     */
     private void createAccount(String email, String password)
     {
+        final Button signUpTemp = (Button) findViewById(R.id.submit_bttn);
+        final Button cancelTemp = (Button) findViewById(R.id.cancel_bttn);
+
+        // Hide buttons
+        signUpTemp.setVisibility(View.INVISIBLE);
+        cancelTemp.setVisibility(View.INVISIBLE);
+
+        // Make them unclickable
+        signUpTemp.setClickable(false);
+        cancelTemp.setClickable(false);
+
+
         authorization.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -101,6 +119,13 @@ public class SignupActivity extends AppCompatActivity {
                     {
                         if (!task.isSuccessful())
                         {
+
+                            signUpTemp.setClickable(true);
+                            cancelTemp.setClickable(true);
+
+                            signUpTemp.setVisibility(View.VISIBLE);
+                            cancelTemp.setVisibility(View.VISIBLE);
+
                             try
                             {
                                 throw task.getException();
@@ -135,19 +160,14 @@ public class SignupActivity extends AppCompatActivity {
     // ----------------------
 
 
-    // ----- UI Manipulation -----
-    private void changeUIVisable(int state)
-    {
-        submit.setVisibility(state);
-        email.setVisibility(state);
-        password.setVisibility(state);
-        confirmPassword.setVisibility(state);
-        name.setVisibility(state);
-    }
-    // ---------------------------
-
-
     // ----- Field Checks -----
+    /**
+     * GUI function that checks to make sure that all the fields for signup are filled
+     * out
+     *
+     *
+     * @return true if all fields are compleated, false if not
+     */
     private boolean allFieldsFull()
     {
            return (!name.getText().toString().equals("") &&
@@ -156,6 +176,12 @@ public class SignupActivity extends AppCompatActivity {
                    !confirmPassword.getText().toString().equals(""));
     }
 
+    /**
+     *  GUI function that cbecks to make sure that the create password
+     *  and the confirm passowrd fields match
+     *
+     * @return true if they match, false if not
+     */
     private boolean passwordsMatch()
     {
         String passOne = password.getText().toString();

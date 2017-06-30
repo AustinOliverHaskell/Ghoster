@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@color/theme3_purple"
+    android:padding="16dp"
+    android:gravity="bottom"
+
+    >
+
+    <RelativeLayout
+        android:layout_height="120dp"
+        android:layout_width="120dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        >
+        <com.austinhaskell.ghoster.CircleImageView
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:src="@drawable/placeholder_image_1"
+            android:id="@+id/profile_img"
+            android:layout_centerInParent="true"
+            />
+
+        <ImageView
+            android:layout_height="wrap_content"
+            android:layout_width="36dp"
+            android:src="@drawable/ic_add_circle_black_36dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:alpha="0.8"
+            />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:layout_marginTop="30dp"
+        android:id="@+id/username_text_drawer"
+        />
+
+</LinearLayout>
