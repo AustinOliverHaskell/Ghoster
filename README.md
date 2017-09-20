@@ -1,6 +1,6 @@
 ## Synopsis
 
-Android App that allows for the tagging of images based off of the geolocation of the user
+Android App that allows for the tagging of images based off of the geolocation of the user. Created using Android Studio and Firebase.
 
 ## Motivation
 
